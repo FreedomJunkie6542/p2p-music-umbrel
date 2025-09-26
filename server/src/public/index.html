@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>P2P Music Server</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 2rem; }
+    button { padding: 0.6rem 1rem; font-weight: 600; }
+    .row { display: grid; grid-template-columns: 1fr auto auto; gap: 0.5rem; align-items: center; }
+    audio { width: 220px; }
+    #tracks { margin-top: 1rem; display: grid; gap: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>🎵 P2P Music Server</h1>
+  <p>This app scans <code>/music</code>, pins files to IPFS, and lets you stream locally or share CIDs.</p>
+  <p>
+    <button id="scan">Scan & Pin</button>
+    <span id="status"></span>
+  </p>
+  <div id="tracks"></div>
+
+  <script>
+    const status = document.getElementById('status');
+    const tracksDiv = document.getElementById('tracks');
+
+    async function load() {
+      const r = await fetch('/api/tracks');
+      const j = await r.json();
+      tracksDiv.innerHTML = '';
+      j.tracks.forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'row';
+        const meta = document.createElement('div');
+        meta.textContent = `${t.title || t.relativePath} — ${t.artist || ''} (${Math.round((t.duration||0))}s)`;
+        const play = document.createElement('audio');
+        play.controls = true;
+        play.src = `/api/stream/${t.cid}`;
+        const share = document.createElement('a');
+        share.href = `https://ipfs.io/ipfs/${t.cid}`;
+        share.target = '_blank';
+        share.textContent = 'Share';
+        row.appendChild(meta);
+        row.appendChild(play);
+        row.appendChild(share);
+        tracksDiv.appendChild(row);
+      });
+      status.textContent = `Showing ${j.count} track(s)`;
+    }
+
+    document.getElementById('scan').onclick = async () => {
+      status.textContent = 'Scanning…';
+      const r = await fetch('/api/index', { method: 'POST' });
+      const j = await r.json();
+      if (!j.ok) {
+        status.textContent = 'Error: ' + j.error;
+      } else {
+        status.textContent = `Indexed. Added ${j.added} / ${j.total}.`;
+        await load();
+      }
+    };
+
+    load();
+  </script>
+</body>
+</html>

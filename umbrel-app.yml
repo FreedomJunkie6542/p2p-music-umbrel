@@ -1,0 +1,28 @@
+manifestVersion: 1
+id: p2p-music
+category: media
+name: P2P Music Server
+version: "0.1.0"
+tagline: Share and stream your music library with friends over IPFS
+icon: https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/ipfs.svg
+description: >
+  A lightweight Umbrel app that scans your local music folder, pins tracks to your private IPFS node,
+  and serves a simple web UI to stream or share CIDs with friends.
+
+developer: You
+website: https://example.com/p2p-music
+support: https://community.umbrel.com/
+repo: https://github.com/yourname/p2p-music-umbrel
+port: 3005
+path: ""
+defaultPassword: ""
+torOnly: false
+hiddenService: false
+releaseNotes: >
+  Initial skeleton with IPFS node + TypeScript API + minimal web UI.
+  Scans /music, pins to IPFS, exposes streaming endpoint via ipfs.cat.
+
+dependencies: []
+permissions:
+  - storage
+  - network
