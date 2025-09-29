@@ -1,33 +1,21 @@
-version: "3.7"
-
 services:
   app_proxy:
     image: getumbrel/app-proxy:v0.5.1
     restart: on-failure
     environment:
-      # <app-id>_<web-container-name>_1
       APP_HOST: p2p-music_web_1
       APP_PORT: 3005
-      # Allow the API routes to be called by the UI without Umbrel auth prompts.
-      # The UI root (/) is still behind Umbrel login.
       PROXY_AUTH_WHITELIST: "/api/*"
 
   ipfs:
     image: ipfs/kubo:latest
     restart: unless-stopped
+    entrypoint: ["/bin/sh","-ec","/start.sh"]
     environment:
       IPFS_PROFILE: server
     volumes:
       - ${APP_DATA_DIR}/ipfs:/data/ipfs
-    entrypoint: ["/bin/sh", "-c"]
-    command: |
-      set -e
-      if [ ! -d "/data/ipfs" ] || [ ! -f "/data/ipfs/config" ]; then
-        ipfs init --profile=server
-      fi
-      ipfs config Addresses.API /ip4/0.0.0.0/tcp/5001
-      ipfs config Addresses.Gateway /ip4/0.0.0.0/tcp/8080
-      exec ipfs daemon --migrate=true --agent-version-suffix=umbrel
+      - ${APP_DATA_DIR}/ipfs/start.sh:/start.sh:ro
 
   web:
     build:
@@ -41,6 +29,5 @@ services:
       MUSIC_DIR: /music
       STATE_DIR: /state
     volumes:
-      # Default location scoped to this app. Put files here or map Umbrel's shared Storage (see README).
       - ${APP_DATA_DIR}/music:/music:ro
       - ${APP_DATA_DIR}/state:/state

@@ -1,0 +1,24 @@
+{
+  "name": "p2p-music-server",
+  "version": "0.1.0",
+  "description": "Umbrel P2P Music Server (Express + IPFS)",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ipfs-http-client": "^60.0.1",
+    "music-metadata": "^7.14.0",
+    "p-queue": "^7.4.1",
+    "mime-types": "^2.1.35"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.7.4",
+    "@types/mime-types": "^2.1.4"
+  }
+}
