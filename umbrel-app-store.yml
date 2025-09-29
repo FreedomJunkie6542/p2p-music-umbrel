@@ -1,0 +1,5 @@
+id: freedomjunkie6542-store
+name: FreedomJunkie6542 App Store
+description: Personal Umbrel store with custom apps.
+apps:
+  - p2p-music
